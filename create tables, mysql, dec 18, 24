@@ -1,0 +1,79 @@
+CREATE TABLE Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    location VARCHAR(100),
+    preferences JSON,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_location (location)
+);
+
+CREATE TABLE Genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    genre_name VARCHAR(50) UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Artists (
+    artist_id INT AUTO_INCREMENT PRIMARY KEY,
+    artist_name VARCHAR(100) NOT NULL,
+    bio TEXT,
+    genre_id INT,
+    website VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_artist_name (artist_name),
+    INDEX idx_genre_id (genre_id),
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+);
+
+CREATE TABLE Venues (
+    venue_id INT AUTO_INCREMENT PRIMARY KEY,
+    venue_name VARCHAR(100) NOT NULL,
+    location VARCHAR(100),
+    capacity INT,
+    contact_info VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_location (location)
+);
+
+CREATE TABLE MusicEvents (
+    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    event_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    event_date DATETIME NOT NULL,
+    genre_id INT,
+    venue_id INT,
+    artist_id INT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_event_date (event_date),
+    INDEX idx_genre_id (genre_id),
+    INDEX idx_venue_id (venue_id),
+    INDEX idx_artist_id (artist_id),
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id),
+    FOREIGN KEY (venue_id) REFERENCES Venues(venue_id),
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id)
+);
+
+CREATE TABLE Favorites (
+    favorite_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type ENUM('Artist', 'Event', 'Venue') NOT NULL,
+    reference_id INT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_favorites (user_id, type, reference_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    type ENUM('Event', 'Venue') NOT NULL,
+    reference_id INT NOT NULL,
+    rating DECIMAL(2, 1),
+    review_text TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_reviews (user_id, type, reference_id),
+    INDEX idx_rating (rating),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
