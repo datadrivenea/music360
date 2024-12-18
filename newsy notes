@@ -1,1 +1,12 @@
 PIP - to install python-related files via PIP, use the Pycharm application to install.
+PIP - to install FLASK, pip install flask
+
+To integrate the Python API with the provided HTML front end, you can use a Python web framework like Flask to create a simple backend. Here's how to set it up:
+
+Steps to Integrate the Python API:
+Install Flask: If you don't already have Flask installed, use the following command:
+
+bash
+Copy code
+pip install flask
+
