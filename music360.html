@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Music Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Local Music Events</h1>
+    </header>
+    <div class="container">
+        <h2>Find Events by Genre</h2>
+        <form id="event-form">
+            <label for="genre">Select Genre:</label>
+            <select id="genre">
+                <option value="1">Rock</option>
+                <option value="2">Jazz</option>
+                <option value="3">Pop</option>
+            </select>
+            <button type="button" onclick="fetchEvents()">Find Events</button>
+        </form>
+        <div id="results">
+            <h3>Events</h3>
+            <table id="event-table">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+async function fetchEvents() {
+    const genreId = document.getElementById('genre').value; // Get the selected genre ID
+    const response = await fetch(`http://localhost:5000/events?genre_id=${genreId}`); // Send GET request
+
+    if (!response.ok) { // Check for HTTP errors
+        alert('Failed to fetch events. Please try again.');
+        return;
+    }
+    const events = await response.json(); // Parse JSON response
+
+    // Check if the response contains any events
+    if (events.length === 0) {
+        alert('No events found for this genre.');
+        return;
+    }
+
+    // Select the table body
+    const tableBody = document.querySelector('#event-table tbody');
+    tableBody.innerHTML = ''; // Clear previous results
+
+    // Loop through each event and create a new row
+    events.forEach(event => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${event.event_name}</td>
+            <td>${new Date(event.event_date).toLocaleDateString()}</td>
+            <td>${event.description}</td>
+        `;
+        tableBody.appendChild(row); // Add row to the table
+    });
+}
+
+    </script>
+</body>
+</html>
+
